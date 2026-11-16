@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePersistedState } from "./usePersistedState";
-import { clampWpm, expandMacro } from "../tx/morse";
+import { clampWpm, expandMacro, shortenRst } from "../tx/morse";
 import {
   AudioTransmitter,
   RigctldTransmitter,
@@ -19,7 +19,7 @@ export type Macro = { label: string; text: string };
 const DEFAULT_MACROS: Macro[] = [
   { label: "CQ", text: "CQ CQ CQ DE {MYCALL} {MYCALL} PSE K" },
   { label: "ANS", text: "{HISCALL} DE {MYCALL} K" },
-  { label: "RST", text: "{HISCALL} UR RST {RST} {RST} BK" },
+  { label: "RST", text: "{HISCALL} UR RST {RST} {RST-SHORT} BK" },
   { label: "QTH", text: "QTH TOKYO TOKYO BK" },
   { label: "NAME", text: "NAME OM BK" },
   { label: "AGN", text: "AGN PSE BK" },
@@ -112,6 +112,7 @@ export const useCwTransmit = () => {
         MYCALL: l.myCall.trim(),
         HISCALL: l.hisCall.trim(),
         RST: l.rst.trim(),
+        "RST-SHORT": shortenRst(l.rst.trim()),
       })
         .replace(/\s+/g, " ")
         .trim();

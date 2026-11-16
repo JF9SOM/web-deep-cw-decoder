@@ -118,7 +118,7 @@ export const MacroPanel = () => {
         <Flex gap="xs">
           <TextInput
             style={{ flex: 1 }}
-            placeholder="Free text (e.g. TNX FER CALL) — {MYCALL} {HISCALL} {RST} allowed"
+            placeholder="Free text (e.g. TNX FER CALL) — {MYCALL} {HISCALL} {RST} {RST-SHORT} allowed"
             value={freeText}
             onChange={(e) => setFreeText(e.currentTarget.value)}
           />
@@ -229,7 +229,7 @@ export const MacroPanel = () => {
             </Flex>
           ))}
           <Text size="xs" c="dimmed">
-            Placeholders: {"{MYCALL}"} {"{HISCALL}"} {"{RST}"} · prosigns: {"<AR> <SK> <BT> <KN> <AS> <BK>"}
+            Placeholders: {"{MYCALL}"} {"{HISCALL}"} {"{RST}"} {"{RST-SHORT}"} (599→5NN) · prosigns: {"<AR> <SK> <BT> <KN> <AS> <BK>"}
           </Text>
         </Stack>
       </Collapse>

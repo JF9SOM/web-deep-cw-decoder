@@ -88,9 +88,19 @@ export const textToElements = (text: string, wpm: number): KeyElement[] => {
 export const clampWpm = (wpm: number) =>
   Math.min(MAX_WPM, Math.max(MIN_WPM, Math.round(wpm)));
 
-/** Replace {MYCALL}, {HISCALL}, {RST} placeholders. Unknown ones are dropped. */
+/** Cut-number form of a report: 9 -> N, 0 -> T (599 -> 5NN). */
+export const shortenRst = (rst: string): string =>
+  rst.replace(/9/g, "N").replace(/0/g, "T");
+
+/**
+ * Replace {MYCALL}, {HISCALL}, {RST}, {RST-SHORT} placeholders. Names are
+ * case-insensitive; unknown ones are dropped.
+ */
 export const expandMacro = (
   text: string,
   vars: Record<string, string>,
 ): string =>
-  text.replace(/\{([A-Za-z]+)\}/g, (_m, name: string) => vars[name.toUpperCase()] ?? "");
+  text.replace(
+    /\{([A-Za-z][A-Za-z-]*)\}/g,
+    (_m, name: string) => vars[name.toUpperCase()] ?? "",
+  );
