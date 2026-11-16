@@ -20,7 +20,7 @@ const RIG_HOST = args["rig-host"] ?? "127.0.0.1";
 const RIG_PORT = Number(args["rig-port"] ?? 4532);
 // Origins allowed to call the bridge (CORS). Add your deployed origin if needed.
 const ALLOWED = new Set(
-  (args.origins ?? "http://localhost:5173,http://127.0.0.1:5173").split(","),
+  (args.origins ?? "http://localhost:5173,http://127.0.0.1:5173,https://jf9som.github.io").split(","),
 );
 
 const rig = (cmd) =>
