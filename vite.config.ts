@@ -44,7 +44,8 @@ export default defineConfig({
       maximumFileSizeToCacheInBytes: 30 * 1024 * 1024,
     },
   }), cloudflare()],
-  base: "./",
+  // GitHub Pages serves under /<repo>/, so CI passes VITE_BASE; local dev/build keep "./".
+  base: process.env.VITE_BASE ?? "./",
   assetsInclude: ["**/*.onnx"],
   worker: {
     format: "es",

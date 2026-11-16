@@ -34,7 +34,7 @@ function App() {
               >
                 <Group gap={10} wrap="nowrap">
                   <img
-                    src="/icon.svg"
+                    src={`${import.meta.env.BASE_URL}icon.svg`}
                     alt=""
                     aria-hidden="true"
                     width={28}

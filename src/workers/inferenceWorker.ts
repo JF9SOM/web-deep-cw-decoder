@@ -34,7 +34,10 @@ import ortWasmJsepBinaryUrl from "../../node_modules/onnxruntime-web/dist/ort-wa
 type OrtModule = typeof Ort;
 
 function resolveModelUrl(fileName: string): string {
-  return new URL(`/models/${fileName}`, self.location.origin).toString();
+  return new URL(
+    `${import.meta.env.BASE_URL}models/${fileName}`,
+    self.location.origin,
+  ).toString();
 }
 
 const MODEL_URLS: Record<ModelKey, string> = {
