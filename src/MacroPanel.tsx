@@ -67,6 +67,30 @@ export const MacroPanel = () => {
         </Text>
       )}
 
+      <Flex gap="xs" align="flex-end" wrap="wrap">
+        <TextInput
+          label="HIS CALL"
+          placeholder="e.g. JA1ABC"
+          w={150}
+          value={tx.hisCall}
+          onChange={(e) => tx.setHisCall(e.currentTarget.value.toUpperCase())}
+        />
+        <TextInput
+          label="RST"
+          w={70}
+          value={tx.rst}
+          onChange={(e) => tx.setRst(e.currentTarget.value)}
+        />
+        <Button
+          variant="subtle"
+          size="compact-sm"
+          onClick={() => tx.setHisCall("")}
+          disabled={!tx.hisCall}
+        >
+          Clear
+        </Button>
+      </Flex>
+
       <SimpleGrid cols={{ base: 3, sm: 4, md: 6 }} spacing={6}>
         {tx.macros.slice(0, MACRO_COUNT).map((m, i) => (
           <Button
@@ -127,10 +151,6 @@ export const MacroPanel = () => {
               />
               <TextInput label="MY CALL" w={120} value={tx.myCall}
                 onChange={(e) => tx.setMyCall(e.currentTarget.value.toUpperCase())} />
-              <TextInput label="HIS CALL" w={120} value={tx.hisCall}
-                onChange={(e) => tx.setHisCall(e.currentTarget.value.toUpperCase())} />
-              <TextInput label="RST" w={70} value={tx.rst}
-                onChange={(e) => tx.setRst(e.currentTarget.value)} />
             </Flex>
 
             {tx.method === "audio" && (
