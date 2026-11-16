@@ -229,7 +229,7 @@ export const MacroPanel = () => {
             </Flex>
           ))}
           <Text size="xs" c="dimmed">
-            Placeholders: {"{MYCALL}"} {"{HISCALL}"} {"{RST}"} {"{RST-SHORT}"} (599→5NN) · prosigns: {"<AR> <SK> <BT> <KN> <AS> <BK>"}
+            Placeholders: {"{MYCALL}"} {"{HISCALL}"} {"{RST}"} {"{RST-SHORT}"} (599→5NN, 579→5BN) · prosigns: {"<AR> <SK> <BT> <KN> <AS> <BK>"}
           </Text>
         </Stack>
       </Collapse>

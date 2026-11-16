@@ -88,9 +88,10 @@ export const textToElements = (text: string, wpm: number): KeyElement[] => {
 export const clampWpm = (wpm: number) =>
   Math.min(MAX_WPM, Math.max(MIN_WPM, Math.round(wpm)));
 
-/** Cut-number form of a report: 9 -> N, 0 -> T (599 -> 5NN). */
+/** Cut-number form of a report: 7 -> B, 8 -> D, 9 -> N, 0 -> T (599 -> 5NN, 579 -> 5BN). */
+const CUT_NUMBERS: Record<string, string> = { "7": "B", "8": "D", "9": "N", "0": "T" };
 export const shortenRst = (rst: string): string =>
-  rst.replace(/9/g, "N").replace(/0/g, "T");
+  rst.replace(/[7890]/g, (d) => CUT_NUMBERS[d]);
 
 /**
  * Replace {MYCALL}, {HISCALL}, {RST}, {RST-SHORT} placeholders. Names are
