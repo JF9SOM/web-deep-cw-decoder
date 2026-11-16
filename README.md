@@ -2,7 +2,9 @@
 
 A real-time Morse code (CW) decoder powered by a neural network model.
 
-Launch DeepCW: https://deepcw.cc/
+Launch this fork: https://jf9som.github.io/web-deep-cw-decoder/
+
+This is a fork of [e04/web-deep-cw-decoder](https://github.com/e04/web-deep-cw-decoder) that adds CW transmit macros (F1–F12 keys, on-screen buttons and a free-text Send form). The original decoder is at https://deepcw.cc/
 
 <img width="256" height="256" src="https://github.com/user-attachments/assets/780f899e-a59b-41b8-b785-1c6686f6da41" />
 
