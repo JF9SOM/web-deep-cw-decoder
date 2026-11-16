@@ -27,6 +27,7 @@ import { BenchmarkPanel } from "./BenchmarkPanel";
 import { LoadProgressBars } from "./LoadProgressBars";
 import { PileupOverlay } from "./PileupOverlay";
 import { StreamingTranscriptDisplay } from "./StreamingTranscriptDisplay";
+import { MacroPanel } from "./MacroPanel";
 import type { PileupTrack } from "./utils/pileupCandidates";
 import { Box, Button, Flex, NativeSelect, Stack, Tooltip } from "@mantine/core";
 import {
@@ -611,6 +612,12 @@ export const Decoder = () => {
           {mainContent}
           <Box px={8}>{controlPanel}</Box>
         </>
+      )}
+
+      {!isBenchmark && (
+        <Box px={8}>
+          <MacroPanel />
+        </Box>
       )}
     </Stack>
   );
