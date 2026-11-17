@@ -152,13 +152,18 @@ export class SerialTransmitter implements Transmitter {
     const elements: KeyElement[] = textToElements(text, wpm);
     this.abort = false;
     this.active = true;
-    // Absolute deadlines so setTimeout jitter does not accumulate.
-    let deadline = performance.now();
     try {
+      // Wake the port up first: the first setSignals call can be slow, and its
+      // delay must not eat into the first elements.
+      await this.setKey(port, pin, false);
+      let deadline = performance.now();
       for (const el of elements) {
         if (this.abort) break;
         await this.setKey(port, pin, el.on);
-        deadline += el.ms;
+        // Measure each element from when the line actually changed, so a slow
+        // setSignals call never shortens (or collapses) an element. Otherwise
+        // deadlines stay absolute, so setTimeout jitter does not accumulate.
+        deadline = Math.max(deadline, performance.now()) + el.ms;
         const wait = deadline - performance.now();
         if (wait > 0) await sleep(wait);
       }
