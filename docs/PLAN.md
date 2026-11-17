@@ -48,7 +48,7 @@ Assign short canned text (CQ, reports, 73…) to keyboard function keys (F1–F1
 
 ## Decisions (from the user)
 - TX methods are selectable at runtime: **Audio**, **Serial DTR/RTS (Web Serial)**, **rigctld CAT**.
-- Pressing a key/button while sending **stops the current transmission and replaces it**.
+- Pressing a key/button while sending **queues it** after the current transmission (changed from "replace"); Esc/Stop clears the queue.
 - Japanese (wabun) is **later**.
 - **Fork-only for now**; upstream PR decided later. Keep the diff additive anyway.
 - UI: F1–F12 keys (send immediately, no Send button) + on-screen F1–F12 buttons (click) + a free-text form with a **Send** button (Enter also sends).

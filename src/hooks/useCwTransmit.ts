@@ -14,6 +14,7 @@ import {
 } from "../tx/transmitters";
 
 export const MACRO_COUNT = 12;
+const MAX_QUEUE = 8;
 export type Macro = { label: string; text: string };
 
 const DEFAULT_MACROS: Macro[] = [
@@ -96,15 +97,56 @@ export const useCwTransmit = () => {
     [],
   );
 
+  const sendingRef = useRef(false);
   const seq = useRef(0);
+  // Texts waiting for the current transmission to finish (already expanded).
+  const queue = useRef<string[]>([]);
+  const [queuedCount, setQueuedCount] = useState(0);
 
   const stop = useCallback(() => {
     seq.current += 1;
+    queue.current = [];
+    sendingRef.current = false;
+    setQueuedCount(0);
     Object.values(transmitters).forEach((t) => t.stop());
     setSendingText(null);
   }, [transmitters]);
 
-  /** Stops anything in progress, then sends `raw` (macro variables expanded). */
+  /** Sends `text` now, then the next queued text (after a word gap). */
+  const transmit = useCallback(
+    (text: string) => {
+      const l = live.current;
+      const mine = ++seq.current;
+      sendingRef.current = true;
+      setError(null);
+      setSendingText(text);
+      transmitters[l.method]
+        .send(text, clampWpm(l.wpm))
+        .catch((e: unknown) => {
+          if (seq.current === mine) {
+            setError(e instanceof Error ? e.message : String(e));
+            queue.current = []; // do not keep sending after a failure
+          }
+        })
+        .then(async () => {
+          if (seq.current !== mine) return; // stopped
+          const next = queue.current.shift();
+          setQueuedCount(queue.current.length);
+          if (next === undefined) {
+            sendingRef.current = false;
+            setSendingText(null);
+            return;
+          }
+          // Word gap (7 dits) between consecutive messages.
+          await new Promise((r) => setTimeout(r, (7 * 1200) / clampWpm(live.current.wpm)));
+          if (seq.current !== mine) return; // stopped during the gap
+          transmit(next);
+        });
+    },
+    [transmitters],
+  );
+
+  /** Sends `raw` (macro variables expanded); queued if one is in progress. */
   const send = useCallback(
     (raw: string) => {
       const l = live.current;
@@ -117,22 +159,16 @@ export const useCwTransmit = () => {
         .replace(/\s+/g, " ")
         .trim();
       if (!text) return;
-      Object.values(transmitters).forEach((t) => t.stop());
-      const mine = ++seq.current;
-      setError(null);
-      setSendingText(text);
-      transmitters[l.method]
-        .send(text, clampWpm(l.wpm))
-        .catch((e: unknown) => {
-          if (seq.current === mine) {
-            setError(e instanceof Error ? e.message : String(e));
-          }
-        })
-        .finally(() => {
-          if (seq.current === mine) setSendingText(null);
-        });
+      if (sendingRef.current) {
+        if (queue.current.length < MAX_QUEUE) {
+          queue.current.push(text);
+          setQueuedCount(queue.current.length);
+        }
+        return;
+      }
+      transmit(text);
     },
-    [transmitters],
+    [transmit],
   );
 
   const connectSerial = useCallback(async () => {
@@ -190,6 +226,6 @@ export const useCwTransmit = () => {
     serialSupported: isSerialSupported(),
     serialConnected: serialPort !== null,
     connectSerial, disconnectSerial,
-    sendingText, error, send, stop,
+    sendingText, queuedCount, error, send, stop,
   };
 };

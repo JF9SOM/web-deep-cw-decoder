@@ -45,10 +45,10 @@ export const MacroPanel = () => {
           SEND
         </Text>
         <Badge color={sending ? "red" : "gray"} variant={sending ? "filled" : "light"}>
-          {sending ? "TX" : "idle"}
+          {sending ? (tx.queuedCount > 0 ? `TX +${tx.queuedCount}` : "TX") : "idle"}
         </Badge>
         <Text size="xs" c="dimmed" style={{ flex: 1, minWidth: 0 }} truncate>
-          {tx.sendingText ?? "F1–F12 send immediately · Esc stops"}
+          {tx.sendingText ?? "F1–F12 send (queued while sending) · Esc stops all"}
         </Text>
         <Button size="compact-sm" color="red" variant="light" onClick={tx.stop} disabled={!sending}>
           Stop

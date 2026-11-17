@@ -33,6 +33,6 @@ DeepCW (web-deep-cw-decoder): browser-based real-time Morse decoder (React 19 + 
 ## Current feature: F-key CW macros (transmit)
 Implemented on branch `feature/fkey-macros`; see `docs/PLAN.md` (decisions, status, hardware checklist).
 - TX methods: Audio / Web Serial DTR-RTS / rigctld via `tools/rigctld-bridge.mjs` (`node tools/rigctld-bridge.mjs` after starting `rigctld -t 4532`).
-- New send always stops and replaces the current one. Fields marked `data-no-fkey` ignore F-key shortcuts.
+- A send while one is in progress is queued (max 8) and sent after the current one with a word gap; Esc/Stop aborts the current one and clears the queue. Fields marked `data-no-fkey` ignore F-key shortcuts.
 - Fork-only for now: don't open an upstream issue/PR unless the user asks.
 - Never key a real transmitter while testing without the user present; test with Audio mode or a dummy rig (`rigctld -m 1`).
