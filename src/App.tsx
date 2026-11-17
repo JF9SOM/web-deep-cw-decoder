@@ -29,7 +29,7 @@ function App() {
           <Stack gap={0}>
             <Flex align="center" justify="space-between">
               <a
-                href="https://github.com/e04/web-deep-cw-decoder/"
+                href="https://github.com/JF9SOM/web-deep-cw-decoder/"
                 style={{ textDecoration: "none" }}
               >
                 <Group gap={10} wrap="nowrap">
@@ -81,7 +81,10 @@ function App() {
         </Box>
         <Decoder />
         <Box px={8}>
-          <Flex justify="right">
+          <Flex justify="right" gap="md" wrap="wrap">
+            <Text component="a" c="dimmed" href="https://github.com/JF9SOM/web-deep-cw-decoder/">
+              Fork with CW transmit macros by JF9SOM
+            </Text>
             <Text component="a" c="dimmed" href="https://github.com/e04/">
               Copyright © 2026 e04
             </Text>
