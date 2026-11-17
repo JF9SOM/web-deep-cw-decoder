@@ -51,7 +51,10 @@ const FILTER_WIDTH_OPTIONS = [
   DEFAULT_DECODE_BANDWIDTH_HZ,
 ] as const;
 const MODE_OPTIONS = ["normal", "pileup", "benchmark"] as const;
-const LANGUAGE_OPTIONS: readonly DecoderLanguage[] = ["EN", "EN/JA"];
+// Fork: the Japanese model is not published upstream, so only EN is offered.
+// A saved "EN/JA" fails validation and falls back to "EN". Restore "EN/JA" and
+// the CW LANG select below once a ja model is available.
+const LANGUAGE_OPTIONS: readonly DecoderLanguage[] = ["EN"];
 const BACKEND_OPTIONS: readonly InferenceBackend[] =
   INFERENCE_BACKEND_OPTIONS.map((option) => option.value);
 
@@ -68,7 +71,7 @@ export const Decoder = () => {
     800,
     (value): value is number => hasMatchingOption(value, FILTER_WIDTH_OPTIONS),
   );
-  const [language, setLanguage] = usePersistedState<DecoderLanguage>(
+  const [language] = usePersistedState<DecoderLanguage>(
     "decoder.language",
     "EN",
     (value): value is DecoderLanguage =>
@@ -541,21 +544,6 @@ export const Decoder = () => {
                     />
                   </Box>
                 </Tooltip>
-                <NativeSelect
-                  label="CW LANG"
-                  data={["EN", "EN/JA"]}
-                  value={language}
-                  onChange={(event) => {
-                    const nextLanguage = parseStringOption(
-                      event.currentTarget.value,
-                      LANGUAGE_OPTIONS,
-                    );
-                    if (nextLanguage !== undefined) {
-                      setLanguage(nextLanguage);
-                    }
-                  }}
-                  style={contentWidthSelectStyle}
-                />
               </>
             )}
           </Flex>
