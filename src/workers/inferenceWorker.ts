@@ -129,6 +129,10 @@ async function fetchBinaryWithProgress(
   if (!response.ok) {
     throw new Error(`Failed to fetch asset: ${response.status} ${response.statusText}`);
   }
+  // Static hosts / dev servers may answer a missing file with the index page.
+  if (response.headers.get("content-type")?.includes("text/html")) {
+    throw new Error("Failed to fetch asset: got an HTML page instead of a file");
+  }
 
   const totalBytes = Number(response.headers.get("content-length") ?? "0");
   const reader = response.body?.getReader();
@@ -225,6 +229,12 @@ async function getModelData(
     })
     .catch((error) => {
       modelDataPromises[modelKey] = null;
+      if (modelKey === "ja") {
+        // The Japanese model is not published in the upstream repository.
+        throw new Error(
+          "The Japanese model is not included in this fork. Set CW LANG to EN.",
+        );
+      }
       throw error;
     });
 
