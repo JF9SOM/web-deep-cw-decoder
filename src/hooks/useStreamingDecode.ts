@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   AUDIO_CHUNK_SAMPLES,
   SAMPLE_RATE,
@@ -55,6 +55,8 @@ type UseStreamingDecodeResult = {
   pendingTextJa: string;
   segments: StreamingDecodeSegment[];
   isDecoding: boolean;
+  /** Empties the transcript (and the not-yet-confirmed tail). */
+  clear: () => void;
 };
 
 type StreamingAudioState = {
@@ -331,6 +333,15 @@ export const useStreamingDecode = ({
   const decodeSettingsSignatureRef = useRef<string | null>(null);
   const nextSegmentIdRef = useRef(1);
   const modelSelectionSignature = backend;
+
+  const clear = useCallback(() => {
+    // Drop buffered audio too, so the old tail is not decoded back into view.
+    pendingSamplesRef.current = new Float32Array(0);
+    audioStateRef.current.version += 1;
+    setSegments([]);
+    setPendingText("");
+    setPendingTextJa("");
+  }, []);
 
   const loaded = loadedEnSignature === modelSelectionSignature;
   const loadedJa = loadedJaSignature === modelSelectionSignature;
@@ -727,5 +738,6 @@ export const useStreamingDecode = ({
     pendingTextJa,
     segments,
     isDecoding,
+    clear,
   };
 };

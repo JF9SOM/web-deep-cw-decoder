@@ -185,6 +185,7 @@ export const Decoder = () => {
     pendingText: streamingPendingText,
     pendingTextJa: streamingPendingTextJa,
     loadError: streamingLoadError,
+    clear: clearTranscript,
   } = useStreamingDecode({
     filterFreq: isPileup ? null : filterFreq,
     filterWidth,
@@ -368,6 +369,16 @@ export const Decoder = () => {
             </Stack>
 
             <Stack gap={0}>
+              <Flex justify="flex-end">
+                <Button
+                  size="compact-xs"
+                  variant="subtle"
+                  color="gray"
+                  onClick={clearTranscript}
+                >
+                  Clear text
+                </Button>
+              </Flex>
               <StreamingTranscriptDisplay
                 segments={streamingSegments}
                 pendingText={streamingPendingText}
