@@ -207,8 +207,12 @@ export class RigctldTransmitter implements Transmitter {
   }
 
   async send(text: string, wpm: number): Promise<void> {
-    const clean = text.replace(/[\r\n]+/g, " ").trim();
+    let clean = text.replace(/[\r\n]+/g, " ").trim();
     if (!clean) return;
+    // Hamlib's Yaesu backend (newcat) treats a one-character message as a
+    // keyer memory number (1-5) instead of text, so "?" fails. A trailing
+    // space makes it a normal two-character text message.
+    if (clean.length === 1) clean += " ";
     // Replaces whatever the rig is currently sending, then sets speed and sends.
     await this.command("\\stop_morse").catch(() => undefined);
     await this.command(`L KEYSPD ${wpm}`).catch(() => undefined);

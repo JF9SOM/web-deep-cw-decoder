@@ -64,3 +64,7 @@ Assign short canned text (CQ, reports, 73…) to keyboard function keys (F1–F1
 - macOS: F-keys need `fn` unless "Use F1, F2, etc. keys as standard function keys" is enabled.
 - Browser may reserve some keys; Esc stops TX.
 - Wabun table; optional "mute decoder during TX".
+
+## rigctld notes
+- Hamlib `send_morse` on Yaesu (newcat, e.g. FT-991): a 1-character message is a memory number (1-5), not text; `RigctldTransmitter` appends a space to such messages. Longer text is stored in keyer memory 1 and played; Hamlib truncates it at ~50 characters, so keep macros short on Yaesu rigs.
+- `send_morse` fails (RPRT -1) unless the rig is in CW/CWR mode.
