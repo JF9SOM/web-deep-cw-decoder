@@ -28,7 +28,7 @@ const rig = (cmd) =>
     const sock = net.connect(RIG_PORT, RIG_HOST);
     let out = "";
     const timer = setTimeout(() => sock.destroy(new Error("rigctld timeout")), 3000);
-    sock.on("connect", () => sock.write(cmd.trim() + "\n"));
+    sock.on("connect", () => sock.write(cmd.replace(/[\r\n]+/g, " ").trimStart() + "\n"));
     sock.on("data", (d) => {
       out += d;
       // Every rigctld reply ends with an "RPRT n" line or a value line; for
