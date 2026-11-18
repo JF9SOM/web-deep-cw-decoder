@@ -183,6 +183,9 @@ export class SerialTransmitter implements Transmitter {
 
 // -------------------------------------------------------------- rigctld ---
 
+/** Extra time per message for the CAT write and the rig starting to send. */
+const RIGCTLD_OVERHEAD_MS = 400;
+
 /**
  * rigctld speaks raw TCP, which browsers cannot open. tools/rigctld-bridge.mjs
  * is a tiny local HTTP -> TCP relay; this class talks to it.
@@ -206,20 +209,45 @@ export class RigctldTransmitter implements Transmitter {
     return body;
   }
 
+  private waitTimer: ReturnType<typeof setTimeout> | null = null;
+  private waitDone: (() => void) | null = null;
+
+  /** Cancellable sleep; resolves early when stop() is called. */
+  private wait(ms: number): Promise<void> {
+    return new Promise<void>((resolve) => {
+      this.waitDone = resolve;
+      this.waitTimer = setTimeout(() => this.endWait(), ms);
+    });
+  }
+
+  private endWait() {
+    if (this.waitTimer) clearTimeout(this.waitTimer);
+    this.waitTimer = null;
+    const done = this.waitDone;
+    this.waitDone = null;
+    done?.();
+  }
+
   async send(text: string, wpm: number): Promise<void> {
     let clean = text.replace(/[\r\n]+/g, " ").trim();
     if (!clean) return;
     // Hamlib's Yaesu backend (newcat) treats a one-character message as a
-    // keyer memory number (1-5) instead of text, so "?" fails. A trailing
-    // space makes it a normal two-character text message.
+    // keyer memory number instead of text, so "?" fails. A trailing space
+    // makes it a normal two-character text message.
     if (clean.length === 1) clean += " ";
-    // Replaces whatever the rig is currently sending, then sets speed and sends.
-    await this.command("\\stop_morse").catch(() => undefined);
+    // No \stop_morse here: queued messages must not cut the one before them.
+    // Esc/Stop calls stop(), which flushes the rig's queue.
     await this.command(`L KEYSPD ${wpm}`).catch(() => undefined);
     await this.command(`\\send_morse ${clean}`);
+    // rigctld answers as soon as the text is queued, so it cannot tell us when
+    // the rig has finished. Wait for the estimated sending time instead, so the
+    // next queued macro starts after this one (plus a little CAT/start-up time).
+    const total = textToElements(clean, wpm).reduce((sum, el) => sum + el.ms, 0);
+    await this.wait(total + RIGCTLD_OVERHEAD_MS);
   }
 
   stop(): void {
+    this.endWait();
     void this.command("\\stop_morse").catch(() => undefined);
   }
 }
