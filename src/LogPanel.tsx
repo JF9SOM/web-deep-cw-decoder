@@ -5,6 +5,8 @@ import { readRigStatus, useRigStatus } from "./hooks/useRigStatus";
 import { useTx } from "./tx/txContext";
 
 // "MM-DD HH:MMZ" for display only; the ADIF record carries the full date.
+const DEFAULT_MY_RST = "599";
+
 const utcNow = () => new Date().toISOString().slice(5, 16).replace("T", " ") + "Z";
 
 type Notice = { ok: boolean; text: string } | null;
@@ -14,7 +16,7 @@ export const LogPanel = () => {
   const tx = useTx();
   const { status } = useRigStatus(tx.bridgeUrl);
   const [clock, setClock] = useState(utcNow());
-  const [myRst, setMyRst] = useState("");
+  const [myRst, setMyRst] = useState(DEFAULT_MY_RST);
   const [name, setName] = useState("");
   const [qth, setQth] = useState("");
   const [manualFreq, setManualFreq] = useState("");
@@ -79,7 +81,7 @@ export const LogPanel = () => {
         return;
       }
       setNotice({ ok: true, text: `Logged ${call.toUpperCase()}` });
-      setMyRst("");
+      setMyRst(DEFAULT_MY_RST);
       setName("");
       setQth("");
     } catch (e) {
