@@ -228,6 +228,20 @@ export const MacroPanel = () => {
                 onChange={(e) => tx.updateMacro(i, { text: e.currentTarget.value.toUpperCase() })} />
             </Flex>
           ))}
+          <Flex>
+            <Button
+              size="compact-sm"
+              variant="light"
+              color="gray"
+              onClick={() => {
+                if (window.confirm("Reset all 12 macros to the defaults? Your edits will be lost.")) {
+                  tx.resetMacros();
+                }
+              }}
+            >
+              Reset macros to defaults
+            </Button>
+          </Flex>
           <Text size="xs" c="dimmed">
             Placeholders: {"{MYCALL}"} {"{HISCALL}"} {"{RST}"} {"{RST-SHORT}"} (599→5NN, 579→5BN) · prosigns: {"<AR> <SK> <BT> <KN> <AS> <BK>"}
           </Text>

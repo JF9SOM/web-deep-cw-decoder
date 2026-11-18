@@ -229,11 +229,14 @@ export const useCwTransmit = () => {
       prev.map((m, i) => (i === index ? { ...m, ...patch } : m)),
     );
 
+  /** Restores the 12 default macros; other settings (calls, WPM...) are kept. */
+  const resetMacros = () => setMacros(DEFAULT_MACROS.map((m) => ({ ...m })));
+
   return {
     method, setMethod, wpm, setWpm, toneHz, setToneHz, volume, setVolume,
     sinkId, setSinkId, serialPin, setSerialPin, bridgeUrl, setBridgeUrl,
     myCall, setMyCall, hisCall, setHisCall, rst, setRst,
-    macros, updateMacro,
+    macros, updateMacro, resetMacros,
     serialSupported: isSerialSupported(),
     serialConnected: serialPort !== null,
     connectSerial, disconnectSerial,
