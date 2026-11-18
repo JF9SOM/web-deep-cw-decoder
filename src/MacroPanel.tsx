@@ -12,7 +12,8 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { useCwTransmit, MACRO_COUNT } from "./hooks/useCwTransmit";
+import { MACRO_COUNT } from "./hooks/useCwTransmit";
+import { useTx } from "./tx/txContext";
 import { MAX_WPM, MIN_WPM } from "./tx/morse";
 import type { SerialPin, TxMethod } from "./tx/transmitters";
 
@@ -23,7 +24,7 @@ const METHOD_LABELS: Record<TxMethod, string> = {
 };
 
 export const MacroPanel = () => {
-  const tx = useCwTransmit();
+  const tx = useTx();
   const [freeText, setFreeText] = useState("");
   const [showSettings, setShowSettings] = useState(false);
   const [showEdit, setShowEdit] = useState(false);

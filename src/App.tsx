@@ -3,6 +3,8 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { DEFAULT_CONTAINER_WIDTH_PX, WIDE_LAYOUT_WIDTH_PX } from "./const";
 import { Decoder } from "./Decoder";
+import { LogPanel } from "./LogPanel";
+import { TxProvider } from "./tx/TxProvider";
 
 function App() {
   const useWideContainer = useMediaQuery(
@@ -79,7 +81,10 @@ function App() {
             </Flex>
           </Stack>
         </Box>
-        <Decoder />
+        <TxProvider>
+          <Decoder />
+          <LogPanel />
+        </TxProvider>
         <Box px={8}>
           <Flex justify="right" gap="md" wrap="wrap">
             <Text component="a" c="dimmed" href="https://github.com/JF9SOM/web-deep-cw-decoder/">

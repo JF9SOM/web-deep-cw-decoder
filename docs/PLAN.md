@@ -68,3 +68,9 @@ Assign short canned text (CQ, reports, 73…) to keyboard function keys (F1–F1
 ## rigctld notes
 - Hamlib `send_morse` on Yaesu (newcat, e.g. FT-991): a 1-character message is a memory number (1-5), not text; `RigctldTransmitter` appends a space to such messages. Longer text is stored in keyer memory 1 and played; Hamlib truncates it at ~50 characters, so keep macros short on Yaesu rigs.
 - `send_morse` fails (RPRT -1) unless the rig is in CW/CWR mode.
+
+## QSO log row (WavelogGate)
+- `src/LogPanel.tsx` (above the footer): UTC, FREQ/MODE (read from rigctld via the bridge, read-only commands `\get_freq`/`\get_mode`), HIS CALL and HIS RST (copied from the SEND panel), MY RST / NAME / QTH (manual), LOG button.
+- LOG builds one ADIF record (`src/log/adif.ts`; CWR is logged as CW) and POSTs it to `<bridge>/adif`; ctld-launcher forwards it as a UDP datagram to 127.0.0.1:<ADIF UDP port> (default 2333 = WavelogGate). The rig is read again at LOG time; when it cannot be read, FREQ/MODE become manual fields.
+- State shared via `TxProvider` (`src/tx/`), so the macro panel and log row use the same HIS CALL / RST.
+- Idea for later: suggest MY RST from the decoded text (UR 5NN ...), never auto-confirm.
