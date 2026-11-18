@@ -158,7 +158,18 @@ export const useCwTransmit = () => {
       })
         .replace(/\s+/g, " ")
         .trim();
-      if (!text) return;
+      if (!text) {
+        // Say why nothing is sent, e.g. a {HISCALL}-only macro with no HIS CALL.
+        const empty = [...raw.matchAll(/\{([A-Za-z][A-Za-z-]*)\}/g)]
+          .map((m) => m[1].toUpperCase())
+          .filter((name, i, all) => all.indexOf(name) === i);
+        setError(
+          empty.length > 0
+            ? `Nothing to send: ${empty.map((n) => `{${n}}`).join(", ")} is empty. Fill in the field first.`
+            : "Nothing to send: the macro is empty.",
+        );
+        return;
+      }
       if (sendingRef.current) {
         if (queue.current.length < MAX_QUEUE) {
           queue.current.push(text);
