@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Badge, Box, Button, Flex, Text, TextInput } from "@mantine/core";
-import { buildAdif } from "./log/adif";
+import { buildAdif, isJapaneseCall, isJccJcgNumber } from "./log/adif";
 import { readRigStatus, useRigStatus } from "./hooks/useRigStatus";
 import { useTx } from "./tx/txContext";
 
@@ -19,6 +19,7 @@ export const LogPanel = () => {
   const [myRst, setMyRst] = useState(DEFAULT_MY_RST);
   const [name, setName] = useState("");
   const [qth, setQth] = useState("");
+  const [county, setCounty] = useState("");
   const [manualFreq, setManualFreq] = useState("");
   const [manualMode, setManualMode] = useState("");
   const [notice, setNotice] = useState<Notice>(null);
@@ -33,6 +34,10 @@ export const LogPanel = () => {
     const call = tx.hisCall.trim();
     if (!call) {
       setNotice({ ok: false, text: "Enter HIS CALL first." });
+      return;
+    }
+    if (county.trim() && isJapaneseCall(call) && !isJccJcgNumber(county)) {
+      setNotice({ ok: false, text: "COUNTY must be a JCC/JCG number (4-6 digits)." });
       return;
     }
     setBusy(true);
@@ -65,6 +70,7 @@ export const LogPanel = () => {
         rstRcvd: myRst,
         name,
         qth,
+        county,
         stationCall: tx.myCall,
       });
       const res = await fetch(`${tx.bridgeUrl.replace(/\/$/, "")}/adif`, {
@@ -84,6 +90,7 @@ export const LogPanel = () => {
       setMyRst(DEFAULT_MY_RST);
       setName("");
       setQth("");
+      setCounty("");
     } catch (e) {
       setNotice({
         ok: false,
@@ -147,6 +154,14 @@ export const LogPanel = () => {
           value={qth}
           onChange={(e) => setQth(e.currentTarget.value)}
           w={76}
+          size="xs"
+        />
+        <TextInput
+          label="COUNTY"
+          placeholder="JCC/JCG"
+          value={county}
+          onChange={(e) => setCounty(e.currentTarget.value)}
+          w={72}
           size="xs"
         />
         <Button size="xs" px={10} onClick={() => void log()} loading={busy}>

@@ -35,6 +35,13 @@ const byteLength = (s: string) => new TextEncoder().encode(s).length;
 const field = (name: string, value: string | undefined): string =>
   value ? `<${name}:${byteLength(value)}>${value}` : "";
 
+/** JA callsigns (DXCC 339). JD1 (Ogasawara, DXCC 177/192) is deliberately excluded. */
+export const isJapaneseCall = (call: string): boolean =>
+  /^(J[A-CE-S]|7[J-N]|8[J-N])\d/i.test(call.trim());
+
+/** JCC (4 or 6 digits, incl. Ku) / JCG (5 digits) numbers, as used in ADIF CNTY for Japan. */
+export const isJccJcgNumber = (value: string): boolean => /^\d{4,6}$/.test(value.trim());
+
 export type Qso = {
   call: string;
   date: Date; // logged in UTC
@@ -44,6 +51,8 @@ export type Qso = {
   rstRcvd: string;
   name?: string;
   qth?: string;
+  /** ADIF CNTY: JCC/JCG number for Japanese stations. */
+  county?: string;
   stationCall?: string;
 };
 
@@ -59,6 +68,8 @@ export const buildAdif = (q: Qso): string => {
   const { mode, submode } = adifMode(q.rigMode);
   return [
     field("call", q.call.trim().toUpperCase()),
+    // The CNTY enumeration depends on DXCC; Wavelog's JCC/JCG awards need 339.
+    q.county?.trim() && isJapaneseCall(q.call) ? field("dxcc", "339") : "",
     field("qso_date", adifDate(q.date)),
     field("time_on", adifTime(q.date)),
     field("band", freqToBand(q.freqMhz)),
@@ -69,6 +80,7 @@ export const buildAdif = (q: Qso): string => {
     field("rst_rcvd", q.rstRcvd.trim()),
     field("name", q.name?.trim()),
     field("qth", q.qth?.trim()),
+    field("cnty", q.county?.trim().toUpperCase()),
     field("station_callsign", q.stationCall?.trim().toUpperCase()),
     "<eor>",
   ]

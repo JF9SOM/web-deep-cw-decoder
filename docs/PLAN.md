@@ -72,6 +72,7 @@ Assign short canned text (CQ, reports, 73…) to keyboard function keys (F1–F1
 ## QSO log row (WavelogGate)
 - `src/LogPanel.tsx` (above the footer): UTC, FREQ/MODE (read from rigctld via the bridge, read-only commands `\get_freq`/`\get_mode`), HIS CALL and HIS RST (copied from the SEND panel), MY RST / NAME / QTH (manual), LOG button.
 - LOG builds one ADIF record (`src/log/adif.ts`; CWR is logged as CW) and POSTs it to `<bridge>/adif`; ctld-launcher forwards it as a UDP datagram to 127.0.0.1:<ADIF UDP port> (default 2333 = WavelogGate). The rig is read again at LOG time; when it cannot be read, FREQ/MODE become manual fields.
+- COUNTY (ADIF `CNTY`): JCC/JCG number (4-6 digits, validated for JA calls). For JA calls (not JD1) `DXCC=339` is added too, because the CNTY enumeration depends on DXCC and Wavelog's JCC/JCG/WAKU awards filter on `COL_CNTY` + `COL_DXCC = 339`.
 - State shared via `TxProvider` (`src/tx/`), so the macro panel and log row use the same HIS CALL / RST.
 - Idea for later: suggest MY RST from the decoded text (UR 5NN ...), never auto-confirm.
 
