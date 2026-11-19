@@ -74,3 +74,7 @@ Assign short canned text (CQ, reports, 73…) to keyboard function keys (F1–F1
 - LOG builds one ADIF record (`src/log/adif.ts`; CWR is logged as CW) and POSTs it to `<bridge>/adif`; ctld-launcher forwards it as a UDP datagram to 127.0.0.1:<ADIF UDP port> (default 2333 = WavelogGate). The rig is read again at LOG time; when it cannot be read, FREQ/MODE become manual fields.
 - State shared via `TxProvider` (`src/tx/`), so the macro panel and log row use the same HIS CALL / RST.
 - Idea for later: suggest MY RST from the decoded text (UR 5NN ...), never auto-confirm.
+
+## On hold: Japanese (wabun)
+- Decoding: the ja model is not published in the upstream repo (the live site serves it in a protected format), so the fork offers EN only (CW LANG select removed).
+- Sending: a wabun table + kana input would be easy, but the owner put it on hold until Japanese decoding is possible. Revisit if upstream publishes the ja model.
